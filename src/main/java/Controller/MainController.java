@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class MainController {
     MainView view;
     Scanner scanner;
-    List<Thread> threads;
+    List<MyTimer> threads;
 
 
     public MainController(){
@@ -22,7 +22,6 @@ public class MainController {
 
 
     public void run(){
-
         String input;
         do{
             view.println("Command?");
@@ -44,6 +43,14 @@ public class MainController {
                 view.println(e.getMessage());
             }
         }
+
+        else if(input.toLowerCase().matches("\\s*check\\s*")){
+            view.printThreadsInfo(threads);
+        }
+
+        else if(input.toLowerCase().matches("\\s*exit\\s*")){
+            threads.stream().forEach(Thread::interrupt);
+        }
     }
 
 
@@ -52,19 +59,19 @@ public class MainController {
                 throw new DuplicateThreadNameException("There is thread with this name already!");
             }
 
-            Thread thread = new Thread(new MyTimer(), threadName);
+            MyTimer thread = new MyTimer(threadName);
             threads.add(thread);
             thread.start();
-        System.out.println(thread.getName());
-
-
-
     }
 
 
     private boolean threadNameAlreadyUsed(String threadName){
         return threads.stream().anyMatch(name -> threadName.equals(name.getName()));
     }
+
+
+
+
 
 
 }
