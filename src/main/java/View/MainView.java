@@ -12,4 +12,6 @@ public class MainView {
     public void print(String string){
         System.out.print(string);
     }
+
+
 }
