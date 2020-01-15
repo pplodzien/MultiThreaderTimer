@@ -1,9 +1,8 @@
 package View;
 
 import Model.MyTimer;
-
 import java.util.Arrays;
-import java.util.List;
+
 
 public class MainView {
 

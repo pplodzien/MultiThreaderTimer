@@ -35,7 +35,7 @@ public class MainController {
             String[] words = input.split("\\s+");
             int indexOfThreadName = 1;
             try{
-                startNewThread(words[indexOfThreadName]);
+                startThread(words[indexOfThreadName]);
             }
             catch (DuplicateThreadNameException e){
                 view.println(e.getMessage());
@@ -58,6 +58,7 @@ public class MainController {
 
         else if(input.toLowerCase().matches("\\s*check\\s*")){
             view.printThreadsInfo(threads.toArray(new MyTimer[threads.size()]));
+            System.out.println(Thread.activeCount());
         }
 
 
@@ -73,23 +74,32 @@ public class MainController {
 
         else if(input.toLowerCase().matches("\\s*exit\\s*")){
             threads.stream().forEach(Thread::interrupt);
+
         }
-
-
-
-
-
-
     }
 
 
-    private void startNewThread(String threadName) throws DuplicateThreadNameException {
-            if (threadNameAlreadyUsed(threadName)){
+    private void startThread(String threadName) throws DuplicateThreadNameException {
+        Optional<MyTimer> thread = getThread(threadName);
+        if(thread.isPresent()){
+            if(isThreadStopped(thread.get())){
+                threads.remove(thread.get());
+                runThread(threadName);
+            }
+            else {
                 throw new DuplicateThreadNameException("There is thread with this name already!");
             }
-            MyTimer thread = new MyTimer(threadName);
-            threads.add(thread);
-            thread.start();
+        }
+        else {
+            runThread(threadName);
+        }
+    }
+
+
+    private void runThread(String threadName){
+        MyTimer newThread = new MyTimer(threadName);
+        threads.add(newThread);
+        newThread.start();
     }
 
 
@@ -123,7 +133,11 @@ public class MainController {
     }
 
 
-    private boolean threadNameAlreadyUsed(String threadName){
-        return threads.stream().anyMatch(name -> threadName.equals(name.getName()));
+    private boolean isThreadStopped(MyTimer threadName){
+        return threadName.isStopped();
     }
+
+
+
+
 }
