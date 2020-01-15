@@ -3,8 +3,8 @@ package Controller;
 import Model.MyTimer;
 import View.MainView;
 import Exception.*;
-
 import java.util.*;
+
 
 public class MainController {
     MainView view;
@@ -24,13 +24,13 @@ public class MainController {
         do{
             view.println("Command?");
             input = scanner.nextLine();
-            makeDecision(input);
+            processInput(input);
         }
         while (!input.toLowerCase().equals("exit"));
     }
 
 
-    private void makeDecision(String input){
+    private void processInput(String input){
         if(input.matches("\\s*start\\s+\\w+\\s*")){
             String[] words = input.split("\\s+");
             int indexOfThreadName = 1;
@@ -84,7 +84,6 @@ public class MainController {
     }
 
 
-
     private Optional<MyTimer> getThread(String threadName){
         Optional<MyTimer> timer;
         for (MyTimer thread: threads) {
@@ -100,10 +99,4 @@ public class MainController {
     private boolean threadNameAlreadyUsed(String threadName){
         return threads.stream().anyMatch(name -> threadName.equals(name.getName()));
     }
-
-
-
-
-
-
 }
