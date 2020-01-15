@@ -19,6 +19,7 @@ public class MainController {
     }
 
 
+
     public void run(){
         String input;
         do{
@@ -30,53 +31,85 @@ public class MainController {
     }
 
 
+
     private void processInput(String input){
         if(input.matches("\\s*start\\s+\\w+\\s*")){
-            String[] words = input.split("\\s+");
-            int indexOfThreadName = 1;
-            try{
-                startThread(words[indexOfThreadName]);
-            }
-            catch (DuplicateThreadNameException e){
-                view.println(e.getMessage());
-            }
+            processStartingThread(input);
         }
 
-
         else if(input.toLowerCase().matches("\\s*stop\\s+\\w+\\s*")){
-            String[] words = input.split("\\s+");
-            int indexOfThreadName = 1;
-
-            try{
-                stopThread(words[indexOfThreadName]);
-            }
-            catch (NoSuchThreadException e){
-                view.println(e.getMessage());
-            }
+           processStoppingThread(input);
         }
 
 
         else if(input.toLowerCase().matches("\\s*check\\s*")){
-            view.printThreadsInfo(threads.toArray(new MyTimer[threads.size()]));
-            System.out.println(Thread.activeCount());
+            processCheckingAllThreads();
         }
 
 
         else if(input.toLowerCase().matches("\\s*check\\s+\\w+\\s*")){
-            String[] words = input.split("\\s+");
-            int indexOfThreadName = 1;
-            try {
-                checkThread(words[indexOfThreadName]);
-            } catch (NoSuchThreadException e) {
-                view.println(e.getMessage());
-            }
+           processCheckingOneThread(input);
         }
 
         else if(input.toLowerCase().matches("\\s*exit\\s*")){
-            threads.stream().forEach(Thread::interrupt);
+            processExiting();
+        }
 
+        else {
+            view.println("Wrong command!");
         }
     }
+
+
+
+    private void processStartingThread(String input){
+        String[] words = input.split("\\s+");
+        int indexOfThreadName = 1;
+        try{
+            startThread(words[indexOfThreadName]);
+        }
+        catch (DuplicateThreadNameException e){
+            view.println(e.getMessage());
+        }
+    }
+
+
+
+    private void processStoppingThread(String input){
+        String[] words = input.split("\\s+");
+        int indexOfThreadName = 1;
+
+        try{
+            stopThread(words[indexOfThreadName]);
+        }
+        catch (NoSuchThreadException e){
+            view.println(e.getMessage());
+        }
+    }
+
+
+
+    private void processCheckingAllThreads(){
+        view.printThreadsInfo(threads.toArray(new MyTimer[threads.size()]));
+    }
+
+
+
+    private void processCheckingOneThread(String input){
+        String[] words = input.split("\\s+");
+        int indexOfThreadName = 1;
+        try {
+            checkThread(words[indexOfThreadName]);
+        } catch (NoSuchThreadException e) {
+            view.println(e.getMessage());
+        }
+    }
+
+
+    private void processExiting(){
+        threads.stream().forEach(Thread::interrupt);
+    }
+
 
 
     private void startThread(String threadName) throws DuplicateThreadNameException {
@@ -96,11 +129,13 @@ public class MainController {
     }
 
 
+
     private void runThread(String threadName){
         MyTimer newThread = new MyTimer(threadName);
         threads.add(newThread);
         newThread.start();
     }
+
 
 
     private void checkThread(String threadName) throws NoSuchThreadException{
@@ -112,6 +147,7 @@ public class MainController {
     }
 
 
+
     private void stopThread(String threadName) throws NoSuchThreadException{
         Optional<MyTimer> thread = getThread(threadName);
         if(!thread.isPresent()){
@@ -119,6 +155,7 @@ public class MainController {
         }
         thread.get().interrupt();
     }
+
 
 
     private Optional<MyTimer> getThread(String threadName){
@@ -133,11 +170,8 @@ public class MainController {
     }
 
 
+
     private boolean isThreadStopped(MyTimer threadName){
         return threadName.isStopped();
     }
-
-
-
-
 }

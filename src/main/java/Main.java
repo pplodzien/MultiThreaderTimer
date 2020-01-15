@@ -1,5 +1,4 @@
 import Controller.MainController;
-import View.MainView;
 
 public class Main {
 

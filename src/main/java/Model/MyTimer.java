@@ -5,9 +5,12 @@ public class MyTimer extends Thread {
     float time;
     boolean stopped;
 
+
+
     public MyTimer(String name){
         super(name);
     }
+
 
 
     public void run() {
@@ -24,9 +27,12 @@ public class MyTimer extends Thread {
         }
     }
 
+
+
     public boolean isStopped(){
         return stopped;
     }
+
 
 
     public float getTimeInSeconds(){
