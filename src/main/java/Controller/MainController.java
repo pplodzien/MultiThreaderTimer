@@ -42,6 +42,7 @@ public class MainController {
             }
         }
 
+
         else if(input.toLowerCase().matches("\\s*stop\\s+\\w+\\s*")){
             String[] words = input.split("\\s+");
             int indexOfThreadName = 1;
@@ -54,13 +55,31 @@ public class MainController {
             }
         }
 
+
         else if(input.toLowerCase().matches("\\s*check\\s*")){
-            view.printThreadsInfo(threads);
+            view.printThreadsInfo(threads.toArray(new MyTimer[threads.size()]));
+        }
+
+
+        else if(input.toLowerCase().matches("\\s*check\\s+\\w+\\s*")){
+            String[] words = input.split("\\s+");
+            int indexOfThreadName = 1;
+            try {
+                checkThread(words[indexOfThreadName]);
+            } catch (NoSuchThreadException e) {
+                view.println(e.getMessage());
+            }
         }
 
         else if(input.toLowerCase().matches("\\s*exit\\s*")){
             threads.stream().forEach(Thread::interrupt);
         }
+
+
+
+
+
+
     }
 
 
@@ -68,10 +87,18 @@ public class MainController {
             if (threadNameAlreadyUsed(threadName)){
                 throw new DuplicateThreadNameException("There is thread with this name already!");
             }
-
             MyTimer thread = new MyTimer(threadName);
             threads.add(thread);
             thread.start();
+    }
+
+
+    private void checkThread(String threadName) throws NoSuchThreadException{
+        Optional<MyTimer> thread = getThread(threadName);
+        if(!thread.isPresent()){
+            throw new NoSuchThreadException("There is no such thread with that name!");
+        }
+        view.printThreadsInfo(thread.get());
     }
 
 
